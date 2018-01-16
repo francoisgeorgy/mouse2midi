@@ -1,3 +1,8 @@
+.idea
+mouse2midi.iml
+tmp
+.cache
+
 # Logs
 logs
 *.log
