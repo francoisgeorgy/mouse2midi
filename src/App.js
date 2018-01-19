@@ -4,12 +4,43 @@ export default () => {
 
     console.log('App starting...');
 
-    const div = document.createElement('div');
-    div.style.width = '200px';
-    div.style.height = '200px';
-    document.body.appendChild(div);
+    // const div = document.createElement('div');
+    // div.style.width = '200px';
+    // div.style.height = '200px';
+    // document.body.appendChild(div);
 
-    const rect = div.getBoundingClientRect();
+    let info = document.getElementById('position');
+
+    let pad = document.getElementById("pad");
+    // console.log(pad);
+
+    const NS = "http://www.w3.org/2000/svg";
+
+    const svg_element = document.createElementNS(NS, "svg");
+    svg_element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+    svg_element.setAttributeNS(null, "viewBox", '0 0 100 100');
+
+    const svg_rect = document.createElementNS(NS, "rect");
+    svg_rect.setAttributeNS(null, "x", '0');
+    svg_rect.setAttributeNS(null, "y", '0');
+    svg_rect.setAttributeNS(null, "width", '100');
+    svg_rect.setAttributeNS(null, "height", '100');
+    svg_rect.setAttribute("fill", 'none');
+    svg_rect.setAttribute("stroke", '#555555');
+    svg_rect.setAttribute("stroke-width", '1');
+    svg_element.appendChild(svg_rect);
+
+    const svg_grid = document.createElementNS(NS, "path");
+    svg_grid.setAttributeNS(null, "d", 'M 0 50 L 100 50 M 50 0 L 50 100');
+    svg_grid.setAttribute("stroke", '#555555');
+    svg_grid.setAttribute("stroke-width", '1');
+    svg_element.appendChild(svg_grid);
+
+    pad.appendChild(svg_element);
+
+
+
+    const rect = pad.getBoundingClientRect();
     console.log(rect);
 
     function getOffsetPosition(e) {
@@ -43,7 +74,7 @@ export default () => {
         }
     }
 
-    const moves = Rx.Observable.fromEvent(div, 'mousemove');
+    const moves = Rx.Observable.fromEvent(pad, 'mousemove');
 
     // Use the map operator to transform the event object to just the x and y coordinates of the mouse
     const transform = moves.map(
@@ -59,7 +90,8 @@ export default () => {
     transform.subscribe(
         obj => {
             console.log('one', obj);
-            div.style.backgroundColor = `rgb(${Math.round(obj.x * 255)}, ${Math.round(obj.y * 255)}, 128)`
+            // pad.style.backgroundColor = `rgb(${Math.round(obj.x * 255)}, ${Math.round(obj.y * 255)}, 128)`
+            info.textContent = `${obj.x.toFixed(2)}, ${obj.y.toFixed(2)}`;
         },
         err => {
             console.log(err)

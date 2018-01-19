@@ -1,3 +1,8 @@
 import main from './App.js';
 
-main();
+
+document.addEventListener("DOMContentLoaded", function(event) {
+
+    main();
+
+});
