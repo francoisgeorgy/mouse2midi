@@ -25,7 +25,7 @@ document.body.appendChild(div);
 
 
 /*
- * SITH A SUBJECT
+ * WITH A SUBJECT
  *
 
     const moves = Rx.Observable.fromEvent(div, 'mousemove');

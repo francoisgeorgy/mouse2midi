@@ -1,0 +1,32 @@
+<!doctype html><!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>svg-marker</title>
+    <style>
+        #container {
+            width: 80vw;
+            height: 60vh;
+            background-color: #aaa;
+        }
+        svg {
+        width: 100%;
+        height: 100%;
+        /*   max-width: 100%; */
+        /*   max-height: 100%; */
+        }
+    </style>
+</head>
+<body style="padding:50px">
+    <div id="container">
+        <svg viewbox='0 0 100 100'  preserveAspectRatio='none'>
+            <path d="M 0 50 L 100 50" stroke="#ff0000" stroke-width="3px" vector-effect="non-scaling-stroke" />
+            <path d="M 50 0 L 50 100" stroke="#ff0000" stroke-width="3px" vector-effect="non-scaling-stroke" />
+            <circle id="dot" cx="50" cy="50" r="4" fill="#000" />
+        </svg>
+    </div>
+    <script src="./svg-marker.js"></script>
+</body>
+</html>
