@@ -2,24 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Mouse2MIDI</title>
     <style>
         #position {
             font-family: sans-serif;
         }
-        #pad {
-            width: 200px;
-            height: 200px;
-            border: 1px solid #555;
-            background-color: #dddddd;
+        #container {
+            /*width: 200px;*/
+            /*height: 200px;*/
+            width: 90vmin;
+            height: 90vmin;
+            /*border: 1px solid #555;*/
+            border: none;
+            padding: 0;
+            background-color: #eee;
+        }
+        svg {
+            /*   object-fit: contain; */
+            width: 100%;
+            height: 100%;
+            /*   max-width: 100%; */
+            /*   max-height: 100%; */
+            cursor: crosshair;
         }
     </style>
 </head>
 <body>
     <script src="./index.js"></script>
     <div id="position">&nbsp;</div>
-    <div id="pad"></div>
+    <div id="container">
+        <svg id="pad" viewbox="0 0 100 100">
+            <!--<rect x="10" y="10" width="80" height="80" fill="#ddd" stroke="#000" stroke-width="10px" vector-effect="non-scaling-stroke" />-->
+            <rect x="0" y="0" width="100" height="100" fill="none" stroke="#aaa" stroke-width="1px" vector-effect="non-scaling-stroke" />
+            <path d="M 0 50 L 100 50" stroke="#aaa" stroke-width="1px" vector-effect="non-scaling-stroke" />
+            <path d="M 50 0 L 50 100" stroke="#aaa" stroke-width="1px" vector-effect="non-scaling-stroke" />
+            <!--<g id="marker">-->
+                <circle id="dot" cx="50" cy="50" r="2" fill="#ff0000" fill-opacity="0.5" />
+            <!--</g>-->
+        </svg>
+    </div>
 </body>
 </html>

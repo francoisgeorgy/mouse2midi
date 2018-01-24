@@ -14,6 +14,10 @@ export default () => {
     let pad = document.getElementById("pad");
     // console.log(pad);
 
+    // let marker = document.getElementById("marker");
+    let dot = document.getElementById("dot");
+
+/*
     const NS = "http://www.w3.org/2000/svg";
 
     const svg_element = document.createElementNS(NS, "svg");
@@ -37,8 +41,7 @@ export default () => {
     svg_element.appendChild(svg_grid);
 
     pad.appendChild(svg_element);
-
-
+*/
 
     const rect = pad.getBoundingClientRect();
     console.log(rect);
@@ -92,6 +95,11 @@ export default () => {
             console.log('one', obj);
             // pad.style.backgroundColor = `rgb(${Math.round(obj.x * 255)}, ${Math.round(obj.y * 255)}, 128)`
             info.textContent = `${obj.x.toFixed(2)}, ${obj.y.toFixed(2)}`;
+
+            // marker.setAttributeNS(null, "transform", `translate(${obj.x * 100},${obj.y * 100})`);
+            dot.setAttributeNS(null, "cx", `${obj.x * 100}`);
+            dot.setAttributeNS(null, "cy", `${obj.y * 100}`);
+
         },
         err => {
             console.log(err)
