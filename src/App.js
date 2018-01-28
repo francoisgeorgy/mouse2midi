@@ -10,9 +10,7 @@ export default () => {
     // document.body.appendChild(div);
 
     let info = document.getElementById('position');
-
     let pad = document.getElementById("pad");
-    // console.log(pad);
 
     // let marker = document.getElementById("marker");
     let dot = document.getElementById("dot");
@@ -45,7 +43,7 @@ export default () => {
 
     const rect = pad.getBoundingClientRect();
     console.log(rect);
-
+/*
     function getOffsetPosition(e) {
         // http://www.jacklmoore.com/notes/mouse-position/
         if (e.offsetX === undefined) {
@@ -76,7 +74,99 @@ export default () => {
             }
         }
     }
+*/
 
+    function updateDisplay(p) {
+        info.textContent = `${p.x.toFixed(2)}, ${p.y.toFixed(2)} rel: ${p.xr.toFixed(2)}, ${p.yr.toFixed(2)}`;
+        dot.setAttributeNS(null, "cx", `${p.xr * 100}`);
+        dot.setAttributeNS(null, "cy", `${p.yr * 100}`);
+    }
+
+    function mouseEventToCoordinate(mouseEvent) {
+        mouseEvent.preventDefault();
+        // console.log(`move ${mouseEvent.offsetX} ${mouseEvent.offsetY}`);
+        console.log(`move ${mouseEvent.currentTarget.id}, ${mouseEvent.target.id}`, mouseEvent);
+        return {
+            // x: mouseEvent.clientX,
+            // y: mouseEvent.clientY
+            x: mouseEvent.offsetX,
+            y: mouseEvent.offsetY
+        };
+    }
+
+    function touchEventToCoordinate(touchEvent) {
+        touchEvent.preventDefault();
+        return {
+            x: touchEvent.changedTouches[0].clientX - rect.left,
+            y: touchEvent.changedTouches[0].clientY - rect.top
+        };
+    }
+
+    function toRelCoord(coord) {
+        let x = Math.max(0, coord.x); // stop at 0, do not go negative
+        let y = Math.max(0, coord.y); // stop at 0, do not go negative
+        return {
+            x: x,
+            y: y,
+            xr: Math.min(x / rect.width, 1.0),
+            yr: Math.min(y / rect.height, 1.0)
+        }
+    }
+
+    const mouseDowns = Rx.Observable.fromEvent(pad, "mousedown").map(mouseEventToCoordinate).map(toRelCoord);
+    const mouseMoves = Rx.Observable.fromEvent(window, "mousemove").map(mouseEventToCoordinate).map(toRelCoord);
+    const mouseUps = Rx.Observable.fromEvent(window, "mouseup").map(mouseEventToCoordinate).map(toRelCoord);
+
+    const touchStarts = Rx.Observable.fromEvent(pad, "touchstart").map(touchEventToCoordinate).map(toRelCoord);
+    const touchMoves = Rx.Observable.fromEvent(pad, "touchmove").map(touchEventToCoordinate).map(toRelCoord);
+    const touchEnds = Rx.Observable.fromEvent(window, "touchend").map(touchEventToCoordinate).map(toRelCoord);
+
+    const starts = mouseDowns.merge(touchStarts);
+    const moves = mouseMoves.merge(touchMoves);
+    const ends = mouseUps.merge(touchEnds);
+
+    // Once a start event occurs, it does not give back the start event itself,
+    // but it only return a sequence of move events till a mouseUp or touchEnd event occurs.
+    const drags = starts.concatMap(dragStartEvent =>
+        moves.takeUntil(ends).map(dragEvent => {
+            const x = dragEvent.x;
+            const y = dragEvent.y;
+            const xr = dragEvent.xr;
+            const yr = dragEvent.yr;
+            console.log(`drags ${x} ${y}`);
+            return {x, y, xr, yr};
+        })
+    );
+    
+    // Reveals the first end event once a start event happened.
+    // "ends.first()" part here will not give back a sequence of end events once once a start event occurs,
+    // but it gives back only the first one.
+    const drops = starts.concatMap(dragStartEvent =>
+        ends.first().map(dragEndEvent => {
+            const x = dragEndEvent.x; // - dragStartEvent.x;
+            const y = dragEndEvent.y; // - dragStartEvent.y;
+            const xr = dragEndEvent.xr; // - dragStartEvent.x;
+            const yr = dragEndEvent.yr; // - dragStartEvent.y;
+            console.log(`drops ${x} ${y}`);
+            return {x, y, xr, yr};
+        })
+    );
+
+    drags.subscribe(
+        // obj => { infos.innerText = `drag ${obj.x}, ${obj.y}`},
+        updateDisplay,
+        err => { console.log(err) },
+        () => { console.log('complete') }
+    );
+
+    drops.subscribe(
+        //obj => { infos.innerText = `drop ${obj.x}, ${obj.y}`},
+        updateDisplay,
+        err => { console.log(err) },
+        () => { console.log('complete') }
+    );
+
+    /*
     const moves = Rx.Observable.fromEvent(pad, 'mousemove');
 
     // Use the map operator to transform the event object to just the x and y coordinates of the mouse
@@ -120,5 +210,6 @@ export default () => {
             console.log('complete')
         }
     );
+*/
 
 }
