@@ -82,15 +82,30 @@ export default () => {
         dot.setAttributeNS(null, "cy", `${p.yr * 100}`);
     }
 
-    function mouseEventToCoordinate(mouseEvent) {
-        mouseEvent.preventDefault();
+    // currentTarget: Identifies the current target for the event, as the event traverses the DOM. 
+    //                It always refers to the element to which the event handler has been attached, 
+    //                as opposed to event.target which identifies the element on which the event occurred.
+    //
+    // target: A reference to the target to which the event was originally dispatched.
+    //         A reference to the object that dispatched the event. It is different from event.currentTarget 
+    //         when the event handler is called during the bubbling or capturing phase of the event.
+    //
+    // MouseEvent.offsetX: The X coordinate of the mouse pointer relative to the position of the padding edge of the target node.
+
+    // Important: we can not use the targetX, targetY properties, which are related to the _target_, because, since we listen to the
+    //            window's mousemove events, the target will change and therefore the offsetX|Y reference will also change.
+
+    function mouseEventToCoordinate(e) {        
+        e.preventDefault();
         // console.log(`move ${mouseEvent.offsetX} ${mouseEvent.offsetY}`);
-        console.log(`move ${mouseEvent.currentTarget.id}, ${mouseEvent.target.id}`, mouseEvent);
+        console.log(`move ${e.currentTarget.id}, ${e.target.id}`, e);
         return {
             // x: mouseEvent.clientX,
             // y: mouseEvent.clientY
-            x: mouseEvent.offsetX,
-            y: mouseEvent.offsetY
+            // x: mouseEvent.offsetX,
+            // y: mouseEvent.offsetY
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
         };
     }
 
