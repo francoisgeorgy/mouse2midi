@@ -41,7 +41,7 @@ export default () => {
     pad.appendChild(svg_element);
 */
 
-    const rect = pad.getBoundingClientRect();
+    var rect = pad.getBoundingClientRect(); // will be update on resize events
     console.log(rect);
 /*
     function getOffsetPosition(e) {
@@ -98,7 +98,7 @@ export default () => {
     function mouseEventToCoordinate(e) {        
         e.preventDefault();
         // console.log(`move ${mouseEvent.offsetX} ${mouseEvent.offsetY}`);
-        console.log(`move ${e.currentTarget.id}, ${e.target.id}`, e);
+        console.log(`mouse->xy ${e.currentTarget.id}, ${e.target.id}`, e);
         return {
             // x: mouseEvent.clientX,
             // y: mouseEvent.clientY
@@ -128,6 +128,20 @@ export default () => {
         }
     }
 
+    function start(e) {
+        const x = e.x;
+        const y = e.y;
+        console.log(`start at ${x} ${y} (${e.xr} ${e.yr})`, e);
+        updateDisplay(e);
+        return e;
+    }
+
+    // function logXY(e) {
+    //     console.log(e);
+    //     let c = toRelCoord({x, y});
+    //     return e;
+    // }
+
     const mouseDowns = Rx.Observable.fromEvent(pad, "mousedown").map(mouseEventToCoordinate).map(toRelCoord);
     const mouseMoves = Rx.Observable.fromEvent(window, "mousemove").map(mouseEventToCoordinate).map(toRelCoord);
     const mouseUps = Rx.Observable.fromEvent(window, "mouseup").map(mouseEventToCoordinate).map(toRelCoord);
@@ -142,7 +156,7 @@ export default () => {
 
     // Once a start event occurs, it does not give back the start event itself,
     // but it only return a sequence of move events till a mouseUp or touchEnd event occurs.
-    const drags = starts.concatMap(dragStartEvent =>
+    const drags = starts.map(start).concatMap(dragStartEvent =>
         moves.takeUntil(ends).map(dragEvent => {
             const x = dragEvent.x;
             const y = dragEvent.y;
@@ -179,6 +193,16 @@ export default () => {
         updateDisplay,
         err => { console.log(err) },
         () => { console.log('complete') }
+    );
+
+
+
+    const resizes = Rx.Observable.fromEvent(window, "resize");
+    resizes.subscribe(
+        e => {
+            console.log(e);
+            rect = pad.getBoundingClientRect();
+        }
     );
 
     /*
